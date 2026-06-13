@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoXveXsXXnXXoXl</title>
+
+<style>
+body{
+    background:#222;
+    color:white;
+    font-family:sans-serif;
+    text-align:center;
+    padding:20px;
+}
+
+textarea{
+    width:90%;
+    max-width:900px;
+    height:180px;
+    margin:10px;
+    padding:10px;
+    font-size:20px;
+    border:none;
+    border-radius:10px;
+    resize:vertical;
+    background:#333;
+    color:white;
+}
+
+#emoji{
+    font-size:28px;
+}
+
+button{
+    padding:10px 20px;
+    font-size:18px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<h1>XXX</h1>
+
+<h2>TXxt</h2>
+<textarea id="normal"></textarea>
+
+<h2>EmXXi</h2>
+<textarea id="emoji"></textarea>
+
+<br>
+<button onclick="copyEmoji()">CoXy</button>
+
+<script>
+
+// ===== 対応表 =====
+// 必要ならここに全部追加していく
+
+const map = {
+"A":"👋",
+"B":"🤚",
+"C":"🖐",
+"D":"✋",
+"E":"🖖",
+"F":"🫱",
+"G":"🫲",
+"H":"🫳",
+"I":"🫴",
+"J":"🫷",
+"K":"🫸",
+"L":"👌",
+"M":"🤌",
+"N":"🤏",
+"O":"✌",
+"P":"🤞",
+"Q":"🫰",
+"R":"🤟",
+"S":"🤘",
+"T":"🤙",
+"U":"👈",
+"V":"👉",
+"W":"👆",
+"X":"👇",
+"Y":"🫵",
+"Z":"👍",
+
+"a":"👎",
+"b":"✊",
+"c":"👊",
+"d":"🤜",
+"e":"👏",
+"f":"🙌",
+"g":"🫶",
+"h":"👐",
+"i":"🤲",
+"j":"🤝",
+"k":"🙏",
+"l":"✍",
+"m":"💅",
+"n":"🤳",
+"o":"💪",
+"p":"🦾",
+"q":"🦿",
+"r":"🦵",
+"s":"🦶",
+"t":"👂",
+"u":"🦻",
+"v":"👃",
+"w":"🧠",
+"x":"🫁",
+"y":"🦷",
+"z":"🦴",
+
+"0":"👀",
+"1":"👁️",
+"2":"👅",
+"3":"👄",
+"4":"😀",
+"5":"😃",
+"6":"😄",
+"7":"😁",
+"8":"😆",
+"9":"😅",
+
+"!":"🤣",
+"\"":"😂",
+"#":"🙂",
+"$":"🙃",
+"%":"😉",
+"&":"🫠",
+"'":"😊",
+"(":"😇",
+")":"🥰",
+"-":"😍",
+"^":"🤩",
+"\\":"😘",
+"@":"😗",
+"[":"😚",
+";":"😙",
+":":"🥲",
+"]":"😋",
+",":"😛",
+".":"😜",
+"/":"🤪",
+"=":"😝",
+"~":"🤗",
+"|":"🤭",
+"`":"🫢",
+"{":"🫣",
+"+":"🤫",
+"*":"🤔",
+"}":"🫡",
+"<":"🤐",
+">":"🤨",
+"?":"😐",
+"_":"😑"
+};
+// ===== 逆対応表 =====
+
+const reverseMap = {};
+
+for(const key in map){
+    reverseMap[map[key]] = key;
+}
+
+// ===== 絵文字一覧 =====
+
+const emojiKeys = Object.keys(reverseMap)
+    .sort((a,b) => b.length - a.length);
+
+// ===== テキスト → 絵文字配列 =====
+
+function textToEmojiArray(text){
+
+    const result = [];
+
+    for(const ch of text){
+        result.push(map[ch] || ch);
+    }
+
+    return result;
+}
+
+// ===== 絵文字列 → 絵文字配列 =====
+
+function emojiStringToArray(text){
+
+    const result = [];
+    let i = 0;
+
+    while(i < text.length){
+
+        let matched = false;
+
+        for(const emoji of emojiKeys){
+
+            if(text.startsWith(emoji, i)){
+
+                result.push(emoji);
+                i += emoji.length;
+                matched = true;
+                break;
+
+            }
+
+        }
+
+        if(!matched){
+
+            result.push(text[i]);
+            i++;
+
+        }
+
+    }
+
+    return result;
+}
+
+// ===== 方法A交換 =====
+// ① 2↔3, 5↔6, 8↔9...
+// ② 3↔5, 6↔8, 9↔11...
+
+function swapSpecial(arr){
+
+    arr = [...arr];
+
+    for(let i = 1; i < arr.length; i += 3){
+
+        if(i + 1 < arr.length){
+
+            [arr[i], arr[i+1]] =
+            [arr[i+1], arr[i]];
+
+        }
+
+    }
+
+    for(let i = 2; i < arr.length; i += 3){
+
+        if(i + 2 < arr.length){
+
+            [arr[i], arr[i+2]] =
+            [arr[i+2], arr[i]];
+
+        }
+
+    }
+
+    return arr;
+}
+
+// ===== 方法A逆交換 =====
+
+function unswapSpecial(arr){
+
+    arr = [...arr];
+
+    for(let i = 2; i < arr.length; i += 3){
+
+        if(i + 2 < arr.length){
+
+            [arr[i], arr[i+2]] =
+            [arr[i+2], arr[i]];
+
+        }
+
+    }
+
+    for(let i = 1; i < arr.length; i += 3){
+
+        if(i + 1 < arr.length){
+
+            [arr[i], arr[i+1]] =
+            [arr[i+1], arr[i]];
+
+        }
+
+    }
+
+    return arr;
+}
+
+// ===== 要素 =====
+
+const normal = document.getElementById("normal");
+const emoji = document.getElementById("emoji");
+
+let updating = false;
+
+// ===== 文字 → 絵文字 =====
+
+normal.addEventListener("input", () => {
+
+    if(updating) return;
+    updating = true;
+
+    const arr = textToEmojiArray(normal.value);
+
+    const swapped = swapSpecial(arr);
+
+    emoji.value = swapped.join("");
+
+    updating = false;
+
+});
+
+// ===== 絵文字 → 文字 =====
+
+emoji.addEventListener("input", () => {
+
+    if(updating) return;
+    updating = true;
+
+    const arr = emojiStringToArray(emoji.value);
+
+    const restored = unswapSpecial(arr);
+
+    let result = "";
+
+    for(const item of restored){
+
+        result += reverseMap[item] || item;
+
+    }
+
+    normal.value = result;
+
+    updating = false;
+
+});
+
+// ===== コピー =====
+
+function copyEmoji(){
+
+    navigator.clipboard.writeText(emoji.value);
+
+}
+
+</script>
+</body>
+</html>
