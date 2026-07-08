@@ -54,6 +54,12 @@ button{
 <br>
 <button onclick="copyEmoji()">CoXy</button>
 
+<br><br>
+
+<img id="secretImage"
+     src=""
+     style="display:none; max-width:500px; border-radius:10px;">
+
 <script>
 
 // ===== 対応表 =====
@@ -292,9 +298,10 @@ function unswapSpecial(arr){
 
 const normal = document.getElementById("normal");
 const emoji = document.getElementById("emoji");
+const secretImage = document.getElementById("secretImage");
 
 let updating = false;
-
+    
 // ===== 文字 → 絵文字 =====
 
 normal.addEventListener("input", () => {
@@ -308,6 +315,27 @@ normal.addEventListener("input", () => {
 
     emoji.value = swapped.join("");
 
+switch(normal.value){
+
+    case "030111241220syakemas1":
+        secretImage.src = "images/Barzil-funk1.png";
+        secretImage.style.display = "block";
+        break;
+
+    case "030111241220syakemas2":
+        secretImage.src = "images/Barzil-funk2.png";
+        secretImage.style.display = "block";
+        break;
+        
+    case "030111241220syakemas3":
+        secretImage.src = "images/Barzil-funk3.png";
+        secretImage.style.display = "block";
+        break;
+
+    default:
+        secretImage.style.display = "none";
+}
+    
     updating = false;
 
 });
